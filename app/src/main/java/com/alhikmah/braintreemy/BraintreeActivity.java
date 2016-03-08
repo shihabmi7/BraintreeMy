@@ -25,15 +25,13 @@ import cz.msebera.android.httpclient.Header;
 public class BraintreeActivity extends AppCompatActivity {
 
     private int REQUEST_CODE = 30;
-    private String HALAL_TOKEN_URI = "http://45.55.196.7:1337/rest/paymentgateway/token";
-    private String HALAL_TRANSACTION = "http://45.55.196.7:1337/rest/paymentgateway/transaction";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_braintree);
 
-        Button button=(Button) findViewById(R.id.button_pay);
+        Button button = (Button) findViewById(R.id.button_pay);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,6 +42,7 @@ public class BraintreeActivity extends AppCompatActivity {
         });
 
     }
+
     public void onBraintreeSubmit(String token) {
 
         PaymentRequest paymentRequest = new PaymentRequest()
@@ -51,10 +50,14 @@ public class BraintreeActivity extends AppCompatActivity {
         startActivityForResult(paymentRequest.getIntent(this), REQUEST_CODE);
 
     }
+
     private void halalResponse() {
 
+        // here I use asyncronous http client library
+        // post with no parameters
+
         AsyncHttpClient client = new AsyncHttpClient();
-        client.post(HALAL_TOKEN_URI, new JsonHttpResponseHandler() {
+        client.post(ApplicationData.HALAL_TOKEN_URI, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 super.onStart();
@@ -78,6 +81,7 @@ public class BraintreeActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE) {
@@ -95,11 +99,14 @@ public class BraintreeActivity extends AppCompatActivity {
     }
 
     void postNonceToServer(String nonce) {
+
+        // post with no parameters
+
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("payment_method_nonce", nonce);
         params.put("amount", new BigDecimal("100.00"));
-        client.post(HALAL_TRANSACTION, params,
+        client.post(ApplicationData.HALAL_TRANSACTION, params,
                 new JsonHttpResponseHandler() {
                     // Your implementation here
 
